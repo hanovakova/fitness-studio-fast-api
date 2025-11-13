@@ -1,0 +1,202 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    padding: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+table {
+    width: 80%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: royalblue;
+    color: white;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+.table-button {
+    padding: 8px 12px;
+    background-color: royalblue;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.delete-button {
+    padding: 8px 12px;
+    background-color: red;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:disabled {
+    background-color: lightgrey;
+}
+
+p {
+    text-align: center;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #444;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 90%;
+    padding: 10px 14px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    margin-bottom: 5px;
+    transition: border-color 0.3s;
+}
+
+input[type="checkbox"] {
+    margin-right: 8px;
+}
+
+.err {
+    color: red;
+    font-size: 0.88em;
+    margin-bottom: 15px;
+    display: block;
+}
+
+.styled-button {
+    background-color: royalblue;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.error-input {
+    border: 2px solid red !important;
+}
+
+.nav-bar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px; /* space between elements */
+    margin-bottom: 10px;
+    color: #333333;
+}
+
+.nav-bar p, .nav-bar form {
+    margin: 0;
+}
+
+.nav-bar a, .nav-bar button {
+    text-decoration: none;
+    padding: 8px 12px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.nav-bar button:hover,
+.nav-bar a:hover {
+    background-color: #ccc;
+}
+
+.table-form {
+    margin: 0;
+}
+
+.styled-form {
+    background-color: #fff;
+    padding: 40px 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+}
+
+.round-image {
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+}
+
+.class-image {
+    width: 100px;
+    height: 60px;
+    border-radius: 15%;
+}
+
+.class-container {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+}
+
+.filters {
+    width: 200px;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.filters label {
+    display: block;
+    margin: 10px 0 5px;
+    font-weight: bold;
+}
+
+.filters select {
+    width: 100%;
+    padding: 6px;
+    margin-bottom: 15px;
+}
+
+.table-container {
+    flex: 1;
+}
+
+.text-disabled-button {
+    color: gray;
+    font-weight: bold;
+}
