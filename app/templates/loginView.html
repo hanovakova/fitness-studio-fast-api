@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <title>Login</title>
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
 </head>
 <body>
 <div class="container">
-    <#include "headerView.html">
+    {% include "headerView.html" %}
     <form class="styled-form" action="/login" method="post">
         <h2>Login</h2>
 
@@ -16,9 +16,10 @@
 
         <label for="password">Password:
             <input type="password" id="password" name="password" required>
-            <#if error??>
-                <span class="err">${error}</span>
-            </#if>
+            {# A simple check for the variable's existence is all that's needed #}
+            {% if error %}
+            <span class="err">{{ error }}</span>
+            {% endif %}
         </label>
         <button class="styled-button" type="submit">Login</button>
     </form>

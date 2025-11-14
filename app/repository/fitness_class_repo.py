@@ -1,22 +1,29 @@
-from typing import List, Optional
+from typing import Optional
 
-from sqlalchemy import select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, with_polymorphic
+from sqlalchemy.orm.util import AliasedClass
 
-from app.orm_models.fitness_class import FitnessClass
+from app.orm_models import FitnessClass
+
 
 class FitnessClassRepository:
 
-    def get_fitness_class(self, session: Session, class_id: int) -> Optional[ FitnessClass]:
+    def get_fitness_class(self, session: Session, class_id: int) -> Optional[FitnessClass]:
         """Gets a single fitness class by its ID."""
-        return session.get(FitnessClass, class_id)
+        all_class_types = with_polymorphic(FitnessClass, "*")
+        return (
+            session.query(all_class_types)
+            .filter(FitnessClass.id == class_id)
+            .first()
+        )
 
-    def get_all_fitness_classes(self, session: Session, skip: int = 0, limit: int = 100) -> List[ FitnessClass]:
+    def get_all_fitness_classes(self, session: Session):
         """Gets a list of all fitness classes with pagination."""
-        statement = select( FitnessClass).offset(skip).limit(limit)
-        return list(session.scalars(statement).all())
+        all_class_types = with_polymorphic(FitnessClass, "*")
+        fitness_classes = session.query(all_class_types).all()
+        return fitness_classes
 
-    def get_fitness_class_with_lock(self, session: Session, class_id: int) -> Optional[ FitnessClass]:
+    def get_fitness_class_with_lock(self, session: Session, class_id: int) -> Optional[FitnessClass]:
         """
         Gets a single fitness class by ID with a PESSIMISTIC WRITE lock.
         Replicates findByIdWithLock.

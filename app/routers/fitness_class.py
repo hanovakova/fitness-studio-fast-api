@@ -63,7 +63,7 @@ async def show_classes(
 
     for fc in classes:
         class_id = fc.id
-        num_signed_up = user_class_service.get_number_of_signed_up_classes(class_id)
+        num_signed_up = user_class_service.get_number_of_signups(class_id)
         is_exceeded = fitness_class_service.is_class_capacity_exceeded(class_id, num_signed_up)
         class_ids_capacity_exceeded[str(class_id)] = is_exceeded
 
@@ -110,12 +110,15 @@ async def sign_up_for_class(
         )
 
     try:
-        user_class_service.sign_up_for_class(
-            user_id=user_id,
-            class_id=classId,
-            fitness_class_service=fitness_class_service
-        )
-        return JSONResponse({"status": "success"})
+        signups =  user_class_service.get_number_of_signups(classId)
+        is_class_capacity_exceeded = fitness_class_service.is_class_capacity_exceeded(classId, signups)
+        if not is_class_capacity_exceeded:
+            user_class_service.sign_up_for_class(
+                user_id=user_id,
+                class_id=classId,
+            )
+            return JSONResponse({"status": "success"})
+
     except ValueError as e:
         return JSONResponse(
             status_code=400,
@@ -124,5 +127,5 @@ async def sign_up_for_class(
     except Exception as e:
         return JSONResponse(
             status_code=500,
-            content={"status": "error", "message": "An unexpected error occurred."}
+            content={"status": "error", "message": str(e)}
         )

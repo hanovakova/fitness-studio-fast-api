@@ -2,48 +2,44 @@
 <html>
 <head>
     <title>Your Classes</title>
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
 </head>
 <body>
-<#include "headerView.html">
+{% include "headerView.html" %}
 
 <h1>Classes You Selected</h1>
 <table>
     <thead>
     <tr>
         <th>Name</th>
-        <th>Description</th>
         <th>Start Time</th>
         <th>End Time</th>
-        <th>Instructor</th>
         <th>Price</th>
+        <th>Status</th>
         <th>Action</th>
     </tr>
     </thead>
     <tbody>
-    <#assign totalPrice = 0>
-    <#list enrolledClasses as enrolledClass>
-        <tr>
-            <td>${enrolledClass.name}</td>
-            <td>${enrolledClass.description}</td>
-            <td>${enrolledClass.startTime}</td>
-            <td>${enrolledClass.endTime}</td>
-            <td>${enrolledClass.instructorName}</td>
-            <td>${enrolledClass.price}</td>
-            <td>
-                <form class="table-form" action="/user-classes/drop" method="post">
-                    <input type="hidden" name="enrolledClassId" value="${enrolledClass.id}"/>
-                    <button class="delete-button" type="submit">Delete</button>
-                </form>
-            </td>
-        </tr>
-        <#assign totalPrice = totalPrice + enrolledClass.price>
-    </#list>
+    {% for enrolledClass in session.enrolledClasses %}
+    <tr>
+        <td>{{ enrolledClass.name }}</td>
+        <td>{{ enrolledClass.start_time }}</td>
+        <td>{{ enrolledClass.end_time }}</td>
+        <td>{{ enrolledClass.price }}</td>
+        <td>{{ enrolledClass.status }}</td>
+        <td>
+            <form class="table-form" action="/user-classes/drop" method="post">
+                <input type="hidden" name="enrolledClassId" value="{{ enrolledClass.id }}"/>
+                <button class="delete-button" type="submit">Delete</button>
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
 
     <tr>
         <td><strong>Total</strong></td>
-        <td colspan="4"></td>
-        <td><strong>${totalPrice}</strong></td>
+        <td colspan="2"></td>
+        <td><strong>{{ session.enrolledClasses | sum(attribute='price') }}</strong></td>
         <td></td>
     </tr>
     </tbody>
@@ -51,12 +47,13 @@
 
 <form class="table-form" action="/checkout" method="get">
     <div style="display: flex; justify-content: center">
+        {# In Jinja, an empty list is "falsy", so this check is simpler #}
         <button class="table-button" type="submit"
-                <#if !enrolledClasses?has_content>disabled</#if>>
+                {% if not session.enrolledClasses %}disabled{% endif %}>
             Check Out
         </button>
     </div>
 </form>
-<p><a href="/fitnessClasses">View other classes</a></p>
+<p><a href="/fitness-classes">View other classes</a></p>
 </body>
 </html>

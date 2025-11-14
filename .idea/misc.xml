@@ -4,9 +4,6 @@
     <option name="sdkName" value="fitness-studio" />
   </component>
   <component name="KubernetesApiPersistence">{}</component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
   <component name="ProjectRootManager" version="2" project-jdk-name="fitness-studio" project-jdk-type="Python SDK">
     <output url="file://$PROJECT_DIR$/out" />
   </component>

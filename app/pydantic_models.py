@@ -25,9 +25,6 @@ class User(UserBase):
     """Schema for reading/returning user data."""
     id: int
 
-    class Config:
-        orm_mode = True  # Renamed to from_attributes in Pydantic v2
-
 
 # --- FitnessClass Schemas ---
 
@@ -35,12 +32,12 @@ class FitnessClassBase(BaseModel):
     """Base schema for FitnessClass."""
     name: Optional[str] = None
     description: Optional[str] = None
-    startTime: Optional[datetime] = None
-    endTime: Optional[datetime] = None
-    instructorName: Optional[str] = None
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None
+    instructor_name: Optional[str] = None
     price: Optional[float] = None
     capacity: Optional[int] = None
-    imagePath: Optional[str] = None
+    image_path: Optional[str] = None
 
 
 class FitnessClassCreate(FitnessClassBase):
@@ -51,13 +48,13 @@ class FitnessClassCreate(FitnessClassBase):
 
 class YogaClassCreate(FitnessClassCreate):
     """Schema for creating a Yoga class."""
-    yogaLevel: Optional[str] = None
+    yoga_level: Optional[str] = None
     class_type: str = "yoga"
 
 
 class SpinningClassCreate(FitnessClassCreate):
     """Schema for creating a Spinning class."""
-    bikeType: Optional[str] = None
+    bike_type: Optional[str] = None
     class_type: str = "spinning"
 
 
@@ -66,16 +63,12 @@ class FitnessClass(FitnessClassBase):
     id: int
     class_type: str
 
-    class Config:
-        orm_mode = True
-
-
 # --- UserClass Schemas ---
 
 class UserClassBase(BaseModel):
     """Base schema for the association."""
-    userId: int
-    classId: int
+    user_id: int
+    class_id: int
     paid: bool = False
 
 
@@ -86,14 +79,6 @@ class UserClassCreate(UserClassBase):
 
 class UserClass(UserClassBase):
     """Schema for reading a user's enrollment."""
-
-    # You could add relationships here if needed
-    # user: User
-    # fitness_class: FitnessClass
-
-    class Config:
-        orm_mode = True
-
 
 class RegistrationForm(BaseModel):
     """
@@ -129,7 +114,12 @@ class RegistrationForm(BaseModel):
 
 
 class FitnessClassDTO(FitnessClass):
-    pass
+    class Config:
+        from_attributes = True
+
+    yoga_level: Optional[str] = None
+    bike_type: Optional[str] = None
+
 
 class PurchaseEvent(BaseModel):
     event_id: uuid.UUID

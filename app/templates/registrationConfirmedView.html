@@ -2,13 +2,13 @@
 <html>
 <head>
     <title>Registration Confirmed</title>
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
 </head>
 <body>
 <div class="container">
-    <#include "headerView.html">
-    <h2>Hello, dear ${username}!</h2>
-    <p><a href="/fitnessClasses">Return...</a></p>
+    {% include "headerView.html" %}
+    <h2>Hello, dear {{ request.session.username }}!</h2>
+    <p><a href="/fitness-classes">Return...</a></p>
 </div>
 </body>
 </html>

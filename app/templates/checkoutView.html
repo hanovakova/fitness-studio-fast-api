@@ -2,11 +2,11 @@
 <html>
 <head>
     <title>Checkout</title>
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
 </head>
 <body>
 <div class="container">
-    <#include "headerView.ftl">
+    {% include 'headerView.html' %}
     <form class="styled-form" action="/checkout" method="post">
         <h2>Checkout</h2>
         <table>
@@ -17,17 +17,20 @@
             </tr>
             </thead>
             <tbody>
-            <#assign totalPrice=0>
-            <#list enrolledClasses as enrolledClass>
-                <tr>
-                    <td>${enrolledClass.name}</td>
-                    <td>${enrolledClass.price}</td>
-                </tr>
-                <#assign totalPrice = totalPrice + enrolledClass.price>
-            </#list>
+            {# 1. Create a new list containing only classes with status == "Pending" #}
+            {% set pendingClasses = session.enrolledClasses | selectattr("status", "equalto", "Pending") %}
+
+            {# 2. Loop over the new, filtered list #}
+            {% for enrolledClass in pendingClasses %}
+            <tr>
+                <td>{{ enrolledClass.name }}</td>
+                <td>{{ enrolledClass.price }}</td>
+            </tr>
+            {% endfor %}
             <tr>
                 <td><strong>Total</strong></td>
-                <td><strong>${totalPrice}</strong></td>
+                {# 3. Sum the new, filtered list for the correct total #}
+                <td><strong>{{ pendingClasses | sum(attribute='price') }}</strong></td>
             </tr>
             </tbody>
         </table>
@@ -41,9 +44,9 @@
                name="creditCard"
                required
                maxlength="19"
-        inputmode="numeric"
-        pattern="\d{4}\s\d{4}\s\d{4}\s\d{4}"
-        title="Please enter a 16-digit credit card number in groups of 4" />
+               inputmode="numeric"
+               pattern="\d{4}\s\d{4}\s\d{4}\s\d{4}"
+               title="Please enter a 16-digit credit card number in groups of 4" />
 
         <script>
             document.getElementById('creditCard').addEventListener('input', function (e) {

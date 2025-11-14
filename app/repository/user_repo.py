@@ -3,7 +3,7 @@ from typing import List, Optional
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.orm_models.user import User
+from app.orm_models import User
 
 
 class UserRepository:

@@ -2,37 +2,30 @@
 <html lang="en">
 <head>
     <title>Purchased Classes</title>
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
 </head>
 <body>
 <div class="container">
-    <#include "headerView.html">
+    {% include "headerView.html" %}
     <h1>Your Classes In Processing</h1>
     <table>
         <thead>
         <tr>
             <th>Name</th>
-            <th>Description</th>
-            <th>Start Time</th>
-            <th>End Time</th>
-            <th>Instructor</th>
             <th>Price</th>
         </tr>
         </thead>
         <tbody>
-        <#list pendingClasses as pendingClass>
-            <tr>
-                <td>${pendingClass.name}</td>
-                <td>${pendingClass.description}</td>
-                <td>${pendingClass.startTime}</td>
-                <td>${pendingClass.endTime}</td>
-                <td>${pendingClass.instructorName}</td>
-                <td>${pendingClass.price}</td>
-            </tr>
-        </#list>
+        {% for pendingClass in pendingClasses %}
+        <tr>
+            <td>{{ pendingClass.name }}</td>
+            <td>{{ pendingClass.price }}</td>
+        </tr>
+        {% endfor %}
         </tbody>
     </table>
-    <p class="center"><a href="/fitnessClasses">View other classes</a></p>
+
+    <p class="center"><a href="/fitness-classes">View other classes</a></p>
 </div>
 </body>
 </html>

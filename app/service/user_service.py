@@ -3,7 +3,7 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from app.config import SessionLocal
-from app.orm_models.user import User
+from app.orm_models import User
 from app.pydantic_models import UserCreate
 from app.repository.user_repo import UserRepository
 from app.service.transactions import run_in_transaction

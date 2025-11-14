@@ -3,7 +3,7 @@ from typing import List
 from sqlalchemy.orm import Session
 
 from app.config import SessionLocal
-from app.orm_models.user_class import UserClass
+from app.orm_models import UserClass
 from app.repository.user_class_repo import UserClassRepository
 from app.service.transactions import run_in_transaction
 
@@ -23,15 +23,13 @@ class UserClassService:
         Service to sign a user up for a class.
         Decorator handles all transaction logic.
         """
-        # 4. Check if user is already enrolled
+        # Check if user is already enrolled
         existing_reg = self.repo.get_user_class_by_id(session, user_id=user_id, class_id=class_id)
         if existing_reg:
             raise ValueError(f"User {user_id} is already enrolled in class {class_id}")
 
-        # 5. Sign up
         new_user_class = self.repo.create_user_class(session, user_id=user_id, class_id=class_id)
 
-        # 6. Decorator will commit
         return new_user_class
 
     @run_in_transaction(SessionLocal)
@@ -73,13 +71,21 @@ class UserClassService:
     def get_unpaid_class_ids(self, user_id: int, session: Session) -> List[int]:
         """Service to get IDs of all unpaid classes for a user."""
         unpaid_enrollments = self.repo.get_unpaid_classes_by_user(session, user_id=user_id)
-        return [reg.classId for reg in unpaid_enrollments]
+        return [reg.class_id for reg in unpaid_enrollments]
 
     @run_in_transaction(SessionLocal)
     def is_paid(self, session: Session, user_id, class_id):
         return self.repo.is_class_paid(session, user_id, class_id)
 
     @run_in_transaction(SessionLocal)
-    def get_number_of_signed_up_classes(self, class_id: int, session: Session) -> int:
+    def get_number_of_signups(self, class_id: int, session: Session) -> int:
         """Gets the number of users signed up for a class."""
         return self.repo.get_enrollment_count_for_class(session, class_id=class_id)
+
+    @run_in_transaction(SessionLocal)
+    def update_status(self, user_id: int, class_id: int, status: str, session: Session):
+        self.repo.update_status(session, user_id, class_id, status)
+
+    @run_in_transaction(SessionLocal)
+    def get_status(self, user_id: int, class_id: int, session: Session):
+        return self.repo.get_status(session, user_id, class_id)

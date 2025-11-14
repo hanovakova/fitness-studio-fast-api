@@ -2,68 +2,64 @@
 <html>
 <head>
     <title>Registration</title>
-    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="stylesheet" type="text/css" href="../static/css/style.css">
 </head>
 <body>
 <div class="container">
-    <#include "headerView.html">
+    {% include "headerView.html" %}
     <form class="styled-form" action="/register" method="POST" enctype="multipart/form-data">
-        <h2>${registrationTitle}</h2>
+        <h2>{{ registrationTitle }}</h2>
 
-        <label>${registrationUsername}
+        <label>{{ registrationUsername }}
             <input type="text" id="username" name="username"
-                   value="${bean.username!}"
-                   class="<#if errors.username??>error-input</#if>"
-                   required>
-            <span class="err">${errors.username!}</span>
+                   value="{{ bean.username | default() }}"
+            class="{% if errors.username %}error-input{% endif %}"
+            required>
+            <span class="err">{{ errors.username | default("") }}</span>
         </label>
 
-        <label>${registrationPassword}
+        <label>{{ registrationPassword }}
             <input type="password" id="password1" name="password1"
-                   class="<#if errors.password1??>error-input</#if>"
+                   class="{% if errors.password1 %}error-input{% endif %}"
                    required>
-            <span class="err">${errors.password1!}</span>
-        </label>
+            <span class="err">{{ errors.password1 | default("") }}</span>
+        </LAbel>
 
-        <label>${registrationRepeatPassword}
+        <label>{{ registrationRepeatPassword }}
             <input type="password" id="password2" name="password2"
-                   class="<#if errors.password2??>error-input</#if>"
+                   class="{% if errors.password2 %}error-input{% endif %}"
                    required>
-            <span class="err">${errors.password2!}</span>
+            <span class="err">{{ errors.password2 | default("") }}</span>
         </label>
 
-        <label>${registrationFullName}
+        <label>{{ registrationFullName }}
             <input type="text" id="name" name="name"
-                   value="${bean.name!}"
-                   class="<#if errors.name??>error-input</#if>"
-                   required>
-            <span class="err">${errors.name!}</span>
+                   value="{{ bean.name | default() }}"
+            class="{% if errors.name %}error-input{% endif %}"
+            required>
+            <span class="err">{{ errors.name | default("") }}</span>
         </label>
 
-        <label>${registrationEmail}
+        <label>{{ registrationEmail }}
             <input type="text" id="email" name="email"
-                   value="${bean.email!}"
-                   class="<#if errors.email??>error-input</#if>"
-                   required>
-            <span class="err">${errors.email!}</span>
+                   value="{{ bean.email | default() }}"
+            class="{% if errors.email %}error-input{% endif %}"
+            required>
+            <span class="err">{{ errors.email | default("") }}</span>
         </label>
 
-        <label>${registrationAdvertisement}
+        <label>{{ registrationAdvertisement }}
             <input type="checkbox" name="advert" value="yes"
-                   <#if bean.advert?? && bean.advert>checked</#if>>
-        </label>
-
-        <label>Avatar (optional):
-            <input type="file" name="avatarFile">
+                   {% if bean.advert %}checked{% endif %}>
         </label>
 
         <button class="styled-button" type="submit">
-            ${registrationSubmit}
+            {{ registrationSubmit }}
         </button>
 
         <p style="text-align:center; margin-top: 20px;">
-            ${registrationQuestion}
-            <a href="/login">${registrationLogin}</a>
+            {{ registrationQuestion }}
+            <a href="/login">{{ registrationLogin }}</a>
         </p>
     </form>
 </div>

@@ -3,3 +3,10 @@ starlette
 pydantic
 fastapi
 uvicorn
+itsdangerous
+psycopg2-binary
+pydantic[email]
+jinja2
+python-multipart
+aio-pika
+pyasyncore

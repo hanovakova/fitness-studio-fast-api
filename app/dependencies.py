@@ -1,12 +1,16 @@
 from starlette.requests import Request
 from starlette.templating import Jinja2Templates
 
+from app.messaging.rabbit_client import RabbitMQClient
 from app.repository.fitness_class_repo import FitnessClassRepository
 from app.repository.user_class_repo import UserClassRepository
 from app.repository.user_repo import UserRepository
 from app.service.fitness_class_service import FitnessClassService
 from app.service.user_class_service import UserClassService
 from app.service.user_service import UserService
+
+REQUEST_QUEUE: str = "purchase_requests"
+RESPONSE_QUEUE: str = "purchase_responses"
 
 jinja_templates = Jinja2Templates(directory="templates")
 def templates():
@@ -37,3 +41,11 @@ def get_session_data(request: Request) -> dict:
         "enrolledClasses": request.session.get("enrolledClasses", []),
         "avatar": request.session.get("avatar")
     }
+
+async def get_rabbit_client():
+    client = RabbitMQClient(queue=REQUEST_QUEUE)
+    try:
+        await client.connect()
+        yield client
+    finally:
+        await client.close()

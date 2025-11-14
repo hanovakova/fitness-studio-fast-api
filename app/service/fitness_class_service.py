@@ -2,9 +2,10 @@ from typing import List, Optional
 
 from sqlalchemy import select, extract
 from sqlalchemy.orm import Session
+from sqlalchemy.orm.util import AliasedClass
 
 from app.config import SessionLocal
-from app.orm_models.fitness_class import FitnessClass
+from app.orm_models import FitnessClass
 from app.pydantic_models import FitnessClassCreate
 from app.repository.fitness_class_repo import FitnessClassRepository
 from app.service.transactions import run_in_transaction
@@ -21,7 +22,7 @@ class FitnessClassService:
         return new_class
 
     @run_in_transaction(SessionLocal)
-    def get_all_classes(self, session: Session) -> List[FitnessClass]:
+    def get_all_classes(self, session: Session):
         """Service to get all classes."""
         return self.repo.get_all_fitness_classes(session)
 
@@ -55,8 +56,8 @@ class FitnessClassService:
                 start_hour, end_hour = 18, 23
 
             query = query.where(
-                extract('hour', FitnessClass.startTime) >= start_hour,
-                extract('hour', FitnessClass.startTime) < end_hour
+                extract('hour', FitnessClass.start_time) >= start_hour,
+                extract('hour', FitnessClass.start_time) < end_hour
             )
         if class_type:
             query = query.where(FitnessClass.class_type == class_type.lower())
@@ -85,9 +86,9 @@ class FitnessClassService:
             return classes  # Default: no filter if time is invalid
 
         def in_frame(c: FitnessClass):
-            if not c.startTime:
+            if not c.start_time:
                 return False
-            hour = c.startTime.hour
+            hour = c.start_time.hour
             return start_hour <= hour < end_hour
 
         return [c for c in classes if in_frame(c)]

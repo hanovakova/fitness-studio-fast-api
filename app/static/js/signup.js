@@ -3,7 +3,7 @@ function signup(button, event) {
     const form = button.closest("form");
     const formData = new FormData(form);
     console.log("Form data: ", formData)
-    fetch("/fitnessClasses", {
+    fetch("/fitness-classes", {
         method: 'POST',
         body: formData
     })

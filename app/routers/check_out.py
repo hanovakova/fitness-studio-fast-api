@@ -7,8 +7,9 @@ from fastapi import Depends, Request
 from fastapi.responses import RedirectResponse
 from starlette.templating import Jinja2Templates
 
-from app.dependencies import templates, fitness_class_service, user_class_service, get_session_data
-from app.pydantic_models import FitnessClassDTO, PurchaseEvent
+from app.dependencies import templates, fitness_class_service, user_class_service, get_session_data, get_rabbit_client
+from app.messaging.rabbit_client import RabbitMQClient
+from app.pydantic_models import FitnessClassDTO
 from app.service.fitness_class_service import FitnessClassService
 from app.service.user_class_service import UserClassService
 
@@ -38,6 +39,7 @@ async def process_checkout(
         request: Request,
         fitness_class_service: FitnessService,
         user_class_service: UserClassSvc,
+        rabbit_client: RabbitMQClient = Depends(get_rabbit_client)
 ):
     """
     Processes the checkout, marks items for purchase, and sends to queue.
@@ -63,34 +65,47 @@ async def process_checkout(
             if fc.price:
                 purchase_sum += fc.price
 
-    # 3. Create DTOs (as Pydantic models) for the event
-    unpaid_classes_dto = [
-        FitnessClassDTO.model_validate(cls)
-        for cls in unpaid_classes_models
-    ]
+    unpaid_classes_dto = []
 
-    # 4. Create PurchaseEvent
-    event = PurchaseEvent(
-        event_id=uuid.uuid4(),
-        user_id=user_id,
-        classes=unpaid_classes_dto,
-        total_sum=purchase_sum,
-        timestamp=datetime.now()
-    )
+    for cls in unpaid_classes_models:
+        cls_dict = {
+            "id": cls.id,
+            "name": cls.name,
+            "price": cls.price,
+            "start_time": cls.start_time,
+            "end_time": cls.end_time,
+            "class_type": getattr(cls, "class_type", None),
+            "yoga_level": getattr(cls, "yoga_level", None),
+            "bike_type": getattr(cls, "bike_type", None),
+        }
+        dto = FitnessClassDTO.model_validate(cls_dict)
+        unpaid_classes_dto.append(dto)
 
-    # 5. Send to RabbitMQ (TODO)
-    try:
-        # rabbit_client.send_message(queue_name, event.model_dump_json())
-        print(f"Sent purchase event to queue (simulation): {event.model_dump_json(indent=2)}")
-    except Exception as e:
-        print(f"ERROR: Failed to send purchase message to queue: {e}")
-        # Handle this error...
+    # 4. Create event payload (RabbitMQ uses dict, not Pydantic model)
+    purchase_dict = {
+        "purchase_id": str(uuid.uuid4()),
+        "user_id": user_id,
+        "classes": [dto.model_dump(mode="json") for dto in unpaid_classes_dto],
+        "total_sum": purchase_sum,
+    }
 
-    # 6. Store pending classes in session for the confirmation page
+    for class_id in unpaid_class_ids:
+        user_class_service.update_status(user_id, class_id, "In process")
+
+
+    # 6. Store pending classes in session
     pending_classes_list = [
         {"id": c.id, "name": c.name, "price": c.price}
         for c in unpaid_classes_models
     ]
     request.session["pendingClasses"] = pending_classes_list
+
+    # 5. Send to RabbitMQ
+    try:
+        await rabbit_client.send_message(purchase_dict)
+    except Exception as e:
+        print(f"ERROR: Failed to send purchase message to queue: {e}")
+    finally:
+        await rabbit_client.close()
 
     return RedirectResponse(url="/user-classes/purchased", status_code=303)
